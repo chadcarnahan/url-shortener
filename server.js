@@ -19,8 +19,14 @@ app.get("/", function (req, res) {
 
 const urlPost = app.post("/api/shorturl", (req, res) => {
   const url = req.body.url;
-  const urlObject = new URL(url);
-  dns.lookup(urlObject.hostname, (err) => {
+  try {
+    new URL(url);
+  } catch (error) {
+    res.json({ error: "invalid url" });
+  }
+  const hostname = new URL(url).hostname;
+
+  dns.lookup(hostname, (err) => {
     if (err) {
       res.json({ error: "invalid url" });
     } else {
